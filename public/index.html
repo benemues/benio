@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#F7F7FA" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>NutriTrack – Kalorienzähler</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ===== Onboarding ===== -->
+  <div id="onboarding" class="screen onboarding hidden">
+    <div class="ob-card">
+      <div class="ob-logo">NT</div>
+      <h1>NutriTrack</h1>
+      <p class="ob-sub">Fotografiere dein Essen – wir zählen die Kalorien</p>
+
+      <div class="ob-step" data-step="1">
+        <label>Wie ist dein Ziel?</label>
+        <div class="chips" data-field="goal">
+          <button class="chip" data-value="lose">Abnehmen</button>
+          <button class="chip active" data-value="keep">Halten</button>
+          <button class="chip" data-value="gain">Zunehmen</button>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label>Geschlecht</label>
+            <div class="chips" data-field="sex">
+              <button class="chip active" data-value="f">Weiblich</button>
+              <button class="chip" data-value="m">Männlich</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Aktivität</label>
+            <select id="ob-activity">
+              <option value="1.2">Wenig (Büro)</option>
+              <option value="1.375" selected>Leicht aktiv</option>
+              <option value="1.55">Aktiv</option>
+              <option value="1.725">Sehr aktiv</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid3">
+          <div class="field"><label>Alter</label><input id="ob-age" type="number" inputmode="numeric" value="25" /></div>
+          <div class="field"><label>Größe (cm)</label><input id="ob-height" type="number" inputmode="numeric" value="170" /></div>
+          <div class="field"><label>Gewicht (kg)</label><input id="ob-weight" type="number" inputmode="decimal" value="70" /></div>
+        </div>
+
+        <button id="ob-finish" class="btn-primary big">Los geht's</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Dashboard ===== -->
+  <div id="view-home" class="screen view">
+    <header class="topbar">
+      <div>
+        <div class="greeting" id="greeting">Guten Tag</div>
+        <div class="date-nav">
+          <button id="prev-day" class="icon-btn">‹</button>
+          <span id="current-date">Heute</span>
+          <button id="next-day" class="icon-btn">›</button>
+        </div>
+      </div>
+      <button id="settings-btn" class="icon-btn round" aria-label="Einstellungen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </header>
+
+    <section class="calorie-card card">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 200 200" class="ring">
+          <circle class="ring-bg" cx="100" cy="100" r="86"></circle>
+          <circle id="cal-ring" class="ring-fg" cx="100" cy="100" r="86"></circle>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-num" id="cal-remaining">0</div>
+          <div class="ring-label">kcal übrig</div>
+        </div>
+      </div>
+      <div class="cal-stats">
+        <div class="cal-stat"><div class="stat-label">Ziel</div><b id="cal-goal">0</b></div>
+        <div class="cal-stat"><div class="stat-label">Gegessen</div><b id="cal-eaten">0</b></div>
+        <div class="cal-stat"><div class="stat-label">Sport</div><b id="cal-burned">0</b></div>
+      </div>
+    </section>
+
+    <section class="macros">
+      <div class="macro card" data-macro="carbs">
+        <div class="stat-label">Kohlenhydrate</div>
+        <div class="macro-val"><b>0</b> / <span>0</span> g</div>
+        <div class="macro-bar"><span></span></div>
+      </div>
+      <div class="macro card" data-macro="protein">
+        <div class="stat-label">Protein</div>
+        <div class="macro-val"><b>0</b> / <span>0</span> g</div>
+        <div class="macro-bar"><span></span></div>
+      </div>
+      <div class="macro card" data-macro="fat">
+        <div class="stat-label">Fett</div>
+        <div class="macro-val"><b>0</b> / <span>0</span> g</div>
+        <div class="macro-bar"><span></span></div>
+      </div>
+    </section>
+
+    <section class="water-card card">
+      <div class="water-head">
+        <span class="stat-label">Wasser</span>
+        <b><span id="water-ml">0</span> / 2000 ml</b>
+      </div>
+      <div class="water-glasses" id="water-glasses"></div>
+    </section>
+
+    <section class="meals" id="meals"></section>
+
+    <div style="height:110px"></div>
+  </div>
+
+  <!-- ===== Suche / Hinzufügen ===== -->
+  <div id="view-search" class="screen view hidden">
+    <header class="topbar">
+      <button id="search-back" class="icon-btn">‹ Zurück</button>
+      <div class="page-title" id="search-meal-title">Frühstück</div>
+      <button id="photo-btn" class="icon-btn round accent" aria-label="Foto aufnehmen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </button>
+    </header>
+
+    <div class="search-box">
+      <input id="search-input" type="search" placeholder="Lebensmittel oder Gericht suchen…" autocomplete="off" />
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="search">Suche</button>
+      <button class="tab" data-tab="recent">Zuletzt</button>
+      <button class="tab" data-tab="custom">Eigenes</button>
+    </div>
+
+    <div id="search-status" class="search-status"></div>
+    <div id="search-results" class="results"></div>
+
+    <!-- Eigenes Lebensmittel -->
+    <div id="custom-form" class="custom-form hidden">
+      <input id="c-name" placeholder="Name (z. B. Oma's Gulasch)" />
+      <div class="grid2">
+        <div class="field"><label>Kalorien (kcal / 100g)</label><input id="c-kcal" type="number" inputmode="decimal" /></div>
+        <div class="field"><label>Portion (g)</label><input id="c-portion" type="number" inputmode="decimal" value="100" /></div>
+      </div>
+      <div class="grid3">
+        <div class="field"><label>KH (g)</label><input id="c-carbs" type="number" inputmode="decimal" /></div>
+        <div class="field"><label>Protein (g)</label><input id="c-protein" type="number" inputmode="decimal" /></div>
+        <div class="field"><label>Fett (g)</label><input id="c-fat" type="number" inputmode="decimal" /></div>
+      </div>
+      <button id="c-save" class="btn-primary">Speichern &amp; hinzufügen</button>
+    </div>
+  </div>
+
+  <!-- ===== Foto-Analyse ===== -->
+  <div id="view-photo" class="screen view hidden">
+    <header class="topbar">
+      <button id="photo-close" class="icon-btn">✕</button>
+      <div class="page-title">Foto-Analyse</div>
+      <span style="width:44px"></span>
+    </header>
+
+    <div class="photo-preview-wrap"><img id="photo-preview" alt="Foto des Gerichts" /></div>
+
+    <div id="photo-status" class="photo-status hidden"></div>
+    <button id="photo-again" class="btn-ghost full hidden">Neues Foto aufnehmen</button>
+
+    <div id="photo-result" class="hidden">
+      <div class="analysis-card card">
+        <div class="ai-head">
+          <div>
+            <div id="ai-dish" class="ai-dish"></div>
+            <div id="ai-hint" class="ai-hint"></div>
+          </div>
+          <span id="ai-conf" class="badge"></span>
+        </div>
+        <div id="ai-items" class="ai-items"></div>
+        <div class="ai-total">
+          <span class="stat-label">Gesamt</span>
+          <b><span id="ai-total-kcal">0</span> kcal</b>
+        </div>
+        <div id="ai-total-macros" class="ai-total-macros"></div>
+      </div>
+
+      <div class="field" style="margin-top:14px">
+        <label>Mahlzeit</label>
+        <select id="photo-meal">
+          <option value="breakfast">Frühstück</option>
+          <option value="lunch">Mittag</option>
+          <option value="dinner">Abend</option>
+          <option value="snack">Snack</option>
+        </select>
+      </div>
+      <div class="sheet-actions">
+        <button id="photo-retry" class="btn-ghost">Neues Foto</button>
+        <button id="photo-add" class="btn-primary">Hinzufügen</button>
+      </div>
+    </div>
+
+    <div style="height:110px"></div>
+  </div>
+  <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
+
+  <!-- ===== Portions-Sheet ===== -->
+  <div id="sheet" class="sheet hidden">
+    <div class="sheet-backdrop"></div>
+    <div class="sheet-card">
+      <div class="sheet-grip"></div>
+      <div class="sheet-food">
+        <div class="sheet-name" id="sheet-name">–</div>
+        <div class="sheet-brand" id="sheet-brand"></div>
+      </div>
+      <div class="sheet-cal">
+        <div class="sheet-cal-num" id="sheet-cal">0</div><small>kcal</small>
+      </div>
+      <div class="sheet-macros" id="sheet-macros"></div>
+
+      <div class="portion-row">
+        <div class="field">
+          <label>Menge</label>
+          <input id="sheet-amount" type="number" inputmode="decimal" value="100" />
+        </div>
+        <div class="field">
+          <label>Einheit</label>
+          <select id="sheet-unit"><option value="1">Gramm</option></select>
+        </div>
+        <div class="field">
+          <label>Mahlzeit</label>
+          <select id="sheet-meal">
+            <option value="breakfast">Frühstück</option>
+            <option value="lunch">Mittag</option>
+            <option value="dinner">Abend</option>
+            <option value="snack">Snack</option>
+          </select>
+        </div>
+      </div>
+      <div class="sheet-actions">
+        <button id="sheet-cancel" class="btn-ghost">Abbrechen</button>
+        <button id="sheet-add" class="btn-primary">Hinzufügen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Einstellungen ===== -->
+  <div id="view-settings" class="screen view hidden">
+    <header class="topbar">
+      <button id="settings-back" class="icon-btn">‹ Zurück</button>
+      <div class="page-title">Einstellungen</div>
+      <span style="width:44px"></span>
+    </header>
+    <div class="settings">
+      <div class="set-group card">
+        <h3>Tagesziele</h3>
+        <div class="field"><label>Kalorien (kcal)</label><input id="s-cal" type="number" inputmode="numeric" /></div>
+        <div class="grid3">
+          <div class="field"><label>KH %</label><input id="s-carbs" type="number" inputmode="numeric" /></div>
+          <div class="field"><label>Protein %</label><input id="s-protein" type="number" inputmode="numeric" /></div>
+          <div class="field"><label>Fett %</label><input id="s-fat" type="number" inputmode="numeric" /></div>
+        </div>
+        <small id="macro-sum-hint" class="hint"></small>
+      </div>
+      <div class="set-group card">
+        <h3>Profil</h3>
+        <div class="grid3">
+          <div class="field"><label>Alter</label><input id="s-age" type="number" /></div>
+          <div class="field"><label>Größe</label><input id="s-height" type="number" /></div>
+          <div class="field"><label>Gewicht</label><input id="s-weight" type="number" /></div>
+        </div>
+        <button id="s-recalc" class="btn-ghost full">Ziel aus Profil neu berechnen</button>
+      </div>
+      <div class="set-group card">
+        <h3>KI-Foto-Analyse</h3>
+        <div class="field"><label>Gemini API-Key (optional)</label><input id="s-apikey" type="password" placeholder="AIza…" autocomplete="off" /></div>
+        <small class="hint">Kostenlosen Key über aistudio.google.com holen (Google-Konto reicht, keine Kreditkarte). Nur nötig, wenn die App ohne Server läuft – auf Cloudflare Pages wird stattdessen die Umgebungsvariable GEMINI_API_KEY genutzt, der Key bleibt dann auf dem Server.</small>
+      </div>
+      <button id="s-save" class="btn-primary big">Speichern</button>
+      <button id="s-reset" class="btn-danger">Alle Daten zurücksetzen</button>
+    </div>
+    <div style="height:110px"></div>
+  </div>
+
+  <!-- ===== Bottom Nav ===== -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="nav-item active" data-nav="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.2 12 4l9 7.2"/><path d="M5.5 9.8V20h13V9.8"/></svg>
+      Start
+    </button>
+    <button class="nav-item fab" data-nav="photo" aria-label="Gericht fotografieren">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    </button>
+    <button class="nav-item" data-nav="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6 8-6s7.2 2 8 6"/></svg>
+      Profil
+    </button>
+  </nav>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
