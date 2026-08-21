@@ -1,7 +1,7 @@
 /* Service Worker – App-Shell cachen (Offline-Grundfunktion)
    Strategie: Netzwerk zuerst, Cache nur als Offline-Fallback –
    so kommen App-Updates sofort an, ohne dass man den Cache leeren muss. */
-const CACHE = 'nutritrack-v3';
+const CACHE = 'benio-v3';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './manifest.json'];
 
 self.addEventListener('install', e => {

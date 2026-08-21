@@ -1,39 +1,39 @@
 /* ============================================================
-   NutriTrack – Kalorienzähler
+   benio – Kalorienzähler
    Speicher: localStorage  |  Suche: Open Food Facts API
    Foto-Analyse: Google Gemini API via /api/analyze (Cloudflare Pages Function)
    ============================================================ */
 'use strict';
 
-const $  = (s, r = document) => r.querySelector(s);
+const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 const round = (n, d = 0) => { const f = 10 ** d; return Math.round(n * f) / f; };
 
 const MEAL_INFO = {
-  breakfast: { label: 'Frühstück', emoji: '🌅' },
-  lunch:     { label: 'Mittag',    emoji: '🍽️' },
-  dinner:    { label: 'Abend',     emoji: '🌙' },
-  snack:     { label: 'Snack',     emoji: '🍫' },
+  breakfast: { label: 'Frühstück', emoji: '' },
+  lunch: { label: 'Mittag', emoji: '' },
+  dinner: { label: 'Abend', emoji: '' },
+  snack: { label: 'Snack', emoji: '' },
 };
 
 /* ---------- State ---------- */
 const DB = {
-  profile: load('nt_profile', null),
-  goals:   load('nt_goals', null),
-  days:    load('nt_days', {}),          // { 'YYYY-MM-DD': { meals:{...}, water, burned } }
-  recent:  load('nt_recent', []),        // zuletzt genutzte Lebensmittel
-  custom:  load('nt_custom', []),        // eigene Lebensmittel
+  DB.profile: load('nt_profile', null),
+  goals: load('nt_goals', null),
+  days: load('nt_days', {}),          // { 'YYYY-MM-DD': { meals:{...}, water, burned } }
+  recent: load('nt_recent', []),       // zuletzt genutzte Lebensmittel
+  custom: load('nt_custom', []),       // eigene Lebensmittel
 };
 let currentDate = todayKey();
 let pendingFood = null;                  // Lebensmittel im Portions-Sheet
 
 function load(k, def) { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } }
-function save(k, v)   { localStorage.setItem(k, JSON.stringify(v)); }
-function persist()    { save('nt_days', DB.days); save('nt_recent', DB.recent); save('nt_custom', DB.custom); }
+function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+function persist() { save('nt_days', DB.days); save('nt_recent', DB.recent); save('nt_custom', DB.custom); }
 
 function todayKey(d = new Date()) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 function getDay(key = currentDate) {
   if (!DB.days[key]) DB.days[key] = { meals: { breakfast: [], lunch: [], dinner: [], snack: [] }, water: 0, burned: 0 };
@@ -51,9 +51,9 @@ function calcGoals(p) {
 }
 function macroGrams(goals) {
   return {
-    carbs:   round(goals.cal * goals.carbs   / 100 / 4),
+    carbs: round(goals.cal * goals.carbs / 100 / 4),
     protein: round(goals.cal * goals.protein / 100 / 4),
-    fat:     round(goals.cal * goals.fat     / 100 / 9),
+    fat: round(goals.cal * goals.fat / 100 / 9),
   };
 }
 
@@ -176,7 +176,7 @@ function renderMeals(day) {
           <div class="fi-kcal">${Math.round(f.kcal)}</div>
           <button class="fi-del" data-del="${key}:${i}">✕</button>
         </div>`).join('')}</div>`
-      : `<div class="meal-empty">Noch nichts hinzugefügt</div>`}
+        : `<div class="meal-empty">Noch nichts hinzugefügt</div>`}
     `;
     wrap.appendChild(el);
   });
@@ -224,7 +224,7 @@ function openSearch(meal) {
   $('#search-input').value = '';
   switchTab('search');
   $('#search-results').innerHTML = '';
-  $('#search-status').textContent = 'Tippe zum Suchen – oder fotografiere dein Gericht 📷';
+  $('#search-status').textContent = 'Tippe zum Suchen – oder fotografiere dein Gericht';
   setTimeout(() => $('#search-input').focus(), 100);
 }
 
@@ -246,9 +246,9 @@ async function searchFood(query) {
     if (res.status === 404 || res.status === 405) {
       const url = 'https://world.openfoodfacts.org/cgi/search.pl?'
         + new URLSearchParams({
-            search_terms: query, search_simple: 1, action: 'process', json: 1,
-            page_size: 30, fields: 'product_name,product_name_de,brands,nutriments,image_small_url,code,serving_size',
-          });
+          search_terms: query, search_simple: 1, action: 'process', json: 1,
+          page_size: 30, fields: 'product_name,product_name_de,brands,nutriments,image_small_url,code,serving_size',
+        });
       res = await fetch(url);
     }
     const data = await res.json();
@@ -315,7 +315,7 @@ function switchTab(tab) {
   }
   if (tab === 'search') {
     const q = $('#search-input').value.trim();
-    if (q.length >= 2) searchFood(q); else status.textContent = 'Tippe zum Suchen 🔍';
+    if (q.length >= 2) searchFood(q); else status.textContent = 'Tippe zum Suchen';
   }
 }
 
@@ -329,7 +329,7 @@ $('#c-save').addEventListener('click', () => {
     carbs100: +$('#c-carbs').value || 0, protein100: +$('#c-protein').value || 0, fat100: +$('#c-fat').value || 0,
   };
   DB.custom.unshift(f); persist();
-  ['#c-name','#c-kcal','#c-carbs','#c-protein','#c-fat'].forEach(s => $(s).value = '');
+  ['#c-name', '#c-kcal', '#c-carbs', '#c-protein', '#c-fat'].forEach(s => $(s).value = '');
   openSheet(f);
 });
 
@@ -613,9 +613,9 @@ function fillSettings() {
   $('#s-apikey').value = localStorage.getItem('nt_apikey') || '';
   macroSumHint();
 }
-['#s-carbs','#s-protein','#s-fat'].forEach(s => $(s).addEventListener('input', macroSumHint));
+['#s-carbs', '#s-protein', '#s-fat'].forEach(s => $(s).addEventListener('input', macroSumHint));
 function macroSumHint() {
-  const sum = (+$('#s-carbs').value||0)+(+$('#s-protein').value||0)+(+$('#s-fat').value||0);
+  const sum = (+$('#s-carbs').value || 0) + (+$('#s-protein').value || 0) + (+$('#s-fat').value || 0);
   const el = $('#macro-sum-hint');
   el.textContent = `Summe: ${sum}%` + (sum === 100 ? ' ✓' : ' (sollte 100% sein)');
   el.style.color = sum === 100 ? 'var(--pri)' : 'var(--danger)';
@@ -650,7 +650,7 @@ $$('.chips').forEach(c => c.addEventListener('click', e => {
 $('#ob-finish').addEventListener('click', () => {
   const profile = {
     goal: $('.chips[data-field=goal] .chip.active').dataset.value,
-    sex:  $('.chips[data-field=sex] .chip.active').dataset.value,
+    sex: $('.chips[data-field=sex] .chip.active').dataset.value,
     activity: +$('#ob-activity').value,
     age: +$('#ob-age').value || 25,
     height: +$('#ob-height').value || 170,
@@ -661,7 +661,7 @@ $('#ob-finish').addEventListener('click', () => {
   save('nt_profile', profile); save('nt_goals', DB.goals);
   $('#onboarding').classList.add('hidden');
   show('view-home'); renderHome();
-  toast('Willkommen bei NutriTrack! 🎉');
+  toast('Willkommen bei benio!');
 });
 
 /* ---------- Toast ---------- */
@@ -682,6 +682,6 @@ function init() {
   } else {
     show('view-home'); renderHome();
   }
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { });
 }
 init();

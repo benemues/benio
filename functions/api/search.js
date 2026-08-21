@@ -23,7 +23,7 @@ export async function onRequestGet({ request }) {
 
   const res = await fetch(url, {
     headers: {
-      'User-Agent': 'NutriTrack/1.0 (private Kalorien-App; Cloudflare Pages)',
+      'User-Agent': 'benio/1.0 (private Kalorien-App; Cloudflare Pages)',
       'Accept': 'application/json',
     },
     cf: { cacheTtl: 300, cacheEverything: true },

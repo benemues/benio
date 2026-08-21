@@ -1,7 +1,7 @@
 /* Cloudflare Pages Function: POST /api/analyze
    Analysiert ein Essensfoto mit der Google Gemini API (Vision + JSON-Schema-Ausgabe).
    Benötigt das Secret GEMINI_API_KEY – kostenloser Key über https://aistudio.google.com
-   (Cloudflare Dashboard → Pages-Projekt "nutritrack" → Settings → Environment variables). */
+   (Cloudflare Dashboard → Pages-Projekt "benio" → Settings → Environment variables). */
 
 /* Alias, der immer auf das aktuelle Flash-Modell zeigt – so bricht nichts,
    wenn Google ältere Modelle abschaltet. */
