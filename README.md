@@ -144,8 +144,8 @@ Ergebnis: Du trackst deine Kalorien, Google sieht die Fotos (für die Analyse), 
 
 ## Lizenz
 
-MIT – nutze es, ändere es, teile es. Ganz ohne nervigen Small Print.
+MIT
 
 ## Bugs? Fehler?
 
-Issues/PRs sind willkommen. Sag Bescheid, wenn die KI mal spinnt oder was nicht funktioniert.
+Issues/PRs sind willkommen. 
